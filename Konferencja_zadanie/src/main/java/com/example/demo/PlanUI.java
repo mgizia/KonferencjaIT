@@ -10,8 +10,6 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
-import java.io.PrintWriter;
-import java.util.Scanner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +20,7 @@ import java.util.Arrays;
 public class PlanUI extends UI {
 
     private VerticalLayout root;
+    File plik = new File("powiadomienia.txt");
     List<Customer> customersList = new ArrayList<Customer>();
     List<String> loginList = new ArrayList<String>();
     HorizontalLayout logLayout = new HorizontalLayout();
@@ -30,11 +29,13 @@ public class PlanUI extends UI {
     private Customer customerLogged;
     private ComboBox customersComboBox = new ComboBox("Twój login");
     private Label logInfo = new Label(infoText);
+    private  int lecture;
+    private String lectureString;
     private boolean logIn;
     private String chosen;
+    final TextField selectedPath = new TextField();
+    Button add = new Button("Rezerwuj");
     Label reservInfo = new Label();
-
-
 
     List<Lecture>plan = Arrays.asList(
             new Lecture(1,111,211,311),
@@ -51,21 +52,15 @@ public class PlanUI extends UI {
         setupLayout();
         addHeader();
         addGrid();
-        addReservationLayout();
-      //  addForm();
-        addTodoList();
-        addDeleteButton();
         infoText=("Zarejestruj się, jeśli zapisujesz się pierwszy raz lub wybierz swoją nazwę użytkownika z listy");
-        addLogInfo(infoText);
-        addLogLayout();
+        selectedPath.setVisible(false);
+        add.setVisible(false);
 
     }
 
-    private void addReservationLayout() {
-    }
 
     private void addLogLayout() {
-            VerticalLayout custLay = addCustomers();
+            VerticalLayout custLay = lodInLayout();
             VerticalLayout userLay = addUserForm();
 
             logLayout.addComponent(userLay);
@@ -112,8 +107,6 @@ public class PlanUI extends UI {
         return check;
     }
 
-
-
     private void addAndUpdate(String name, String email){
 
        int lista_lenght = customersList.size();
@@ -134,7 +127,8 @@ public class PlanUI extends UI {
 
 
    }
-    private VerticalLayout addCustomers() {
+
+    private VerticalLayout lodInLayout() {
         VerticalLayout customersLayout = new VerticalLayout();
         customersLayout.setWidth("80%");
 
@@ -145,14 +139,20 @@ public class PlanUI extends UI {
         logInButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
         logInButton.setIcon(VaadinIcons.PLUS);
 
-
         logInButton.addClickListener(clickEvent -> {
-           logIn = true;
-           logLayout.setVisible(false);
-           String logName = (String) customersComboBox.getValue() ;
-           whoIsLoggedIn(logName);
-           infoText="Jestes zalogowany jako: " + customerLogged.getName() ;
-           addLogInfo(infoText);
+            String logName = (String) customersComboBox.getValue() ;
+            if(logName.equals("")==false){
+                logIn = true;
+                logLayout.setVisible(false);
+                selectedPath.setVisible(true);
+                add.setVisible(true);
+
+                whoIsLoggedIn(logName);
+                infoText="Jestes zalogowany jako: " + customerLogged.getName() ;
+                addLogInfo(infoText);
+                addTodoList();
+                addDeleteButton();
+            }
 
         });
 
@@ -179,7 +179,8 @@ public class PlanUI extends UI {
 
         logInfo.setCaption(infoText);
         logInfo.addStyleName(ValoTheme.LABEL_H2);
-        root.addComponent(logInfo);
+        logInfo.setVisible(true);
+
     }
 
     private VerticalLayout addUserForm() {
@@ -220,7 +221,6 @@ public class PlanUI extends UI {
         return userLayout;
     }
 
-
     private void addGrid() {
         Grid<Lecture>grid = new Grid();
         grid.setItems(plan);
@@ -228,6 +228,9 @@ public class PlanUI extends UI {
         grid.addColumn(Lecture::getPath2).setCaption("Ścieżka tematyczna nr 2");
         grid.addColumn(Lecture::getPath3).setCaption("Ścieżka tematyczna nr 3");
         grid.setSizeFull();
+
+         addLogInfo(infoText);
+         addLogLayout();
 
     /*   final TextField selectedPath2 = new TextField();
         grid.addItemClickListener(new ItemClickListener<Lecture>() {
@@ -258,8 +261,7 @@ public class PlanUI extends UI {
 
      */
 
-        final TextField selectedPath = new TextField();
-        Button add = new Button("Rezerwuj");
+
         add.addStyleName(ValoTheme.BUTTON_PRIMARY);
         add.setIcon(VaadinIcons.PLUS);
         add.setClickShortcut(ShortcutAction.KeyCode.ENTER);
@@ -277,11 +279,12 @@ public class PlanUI extends UI {
         add.addClickListener(clickEvent -> {
            reservationId(Integer.parseInt(selectedPath.getValue()));
 
-           // planLayout.add(new Plan(reservation.getValue()));
-           // reservation.clear();
-           // reservation.focus();
+           planLayout.add(new Plan(customerLogged.getName(),lectureString));
+            selectedPath.clear();
+            selectedPath.focus();
         });
 
+        selectedPath.focus();
         root.addComponent(grid);
         root.addComponents(selectedPath,add,reservInfo);
     }
@@ -289,7 +292,7 @@ public class PlanUI extends UI {
     private void reservationId(int selPath) {
 
         Lecture lect = new Lecture();
-        int lecture;
+
         String mess;
        int a = lect.getId(chosen);
        if (selPath == 1 || selPath == 2 || selPath ==3){
@@ -303,11 +306,10 @@ public class PlanUI extends UI {
            reservInfo.setCaption(mess);
          //  sendMessage(mess);
        }
-
+        lectureString = Integer.toString(lecture);
+       lectureString = selPath + "," + chosen;
         sendMessage(mess);
     }
-
-    File plik = new File("powiadomienia.txt");
 
     private void sendMessage(String mess) {
 
@@ -321,7 +323,6 @@ public class PlanUI extends UI {
             }
         }
     }
-
 
     private void addHeader() {
         Label header = new Label("Konferencja IT");
@@ -343,6 +344,8 @@ public class PlanUI extends UI {
         header2c.addStyleName(ValoTheme.LABEL_SMALL);
 
         root.addComponents(header, header2, header2a, header2b, header2c);
+        logInfo.setVisible(false);
+        root.addComponent(logInfo);
     }
 
     private void setupLayout() {
@@ -353,35 +356,15 @@ public class PlanUI extends UI {
 
     private void addTodoList() {
         planLayout.setWidth("80%");
-        root.addComponent(planLayout);
+        Label userRes = new Label("Moje rezerwacje: ");
+        userRes.addStyleName(ValoTheme.LABEL_H4);
+        root.addComponents(userRes, planLayout);
     }
 
     private void addDeleteButton() {
-        root.addComponent(new Button("Delete completed", clickEvent ->  {
+        root.addComponent(new Button("Rezygnuję z zaznaczonych rezerwacji", clickEvent ->  {
             planLayout.deleteCompleted();
         }));
     }
 
-    private void addForm() {
-        HorizontalLayout formLayout =  new HorizontalLayout();
-        formLayout.setWidth("80%");
-
-        TextField reservation = new TextField();
-        Button add = new Button("Add");
-        add.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        add.setIcon(VaadinIcons.PLUS);
-
-        formLayout.addComponent(reservation);
-        formLayout.addComponent(add);
-
-        add.addClickListener(clickEvent -> {
-            planLayout.add(new Plan(reservation.getValue()));
-            reservation.clear();
-            reservation.focus();
-        });
-
-        reservation.focus();
-        add.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-        root.addComponent(formLayout);
-    }
 }

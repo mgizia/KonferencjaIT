@@ -20,11 +20,12 @@ public class PlanItemLayout extends HorizontalLayout {
         user = new TextField();
         lecture = new TextField();
 
+
         user.addStyleName(ValoTheme.TEXTFIELD_BORDERLESS);
         lecture.addStyleName(ValoTheme.TEXTFIELD_BORDERLESS);
         addComponent(deleted);
-        addComponentsAndExpand(user);
-        addComponentsAndExpand(user);
+       // addComponentsAndExpand(user);
+        addComponentsAndExpand(lecture);
         setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);
 
         Binder<Plan> binder = new Binder<>(Plan.class);
