@@ -1,6 +1,7 @@
 package com.example.demo;
 
 
+import ch.qos.logback.core.joran.spi.ConsoleTarget;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
@@ -9,8 +10,8 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.lang.model.type.ArrayType;
-import javax.swing.*;
+import javax.validation.constraints.Null;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
 
@@ -19,9 +20,12 @@ import java.util.Arrays;
 public class PlanUI extends UI {
 
     private VerticalLayout root;
-    private Customer[]  customersTab = new Customer[60];
-    Customer customer;
-    private static ComboBox customersComboBox;
+    List<Customer> customersList = new ArrayList<Customer>();
+    List<String> loginList = new ArrayList<String>();
+
+    private String info;
+    private Customer customer;
+    private static ComboBox customersComboBox = new ComboBox("Twój login");;
 
 
 
@@ -59,15 +63,68 @@ public class PlanUI extends UI {
         root.addComponent(logLayout);
 
     }
+    private boolean check(String login, String email){
+        int lista_lenght = customersList.size();
+        boolean check = false;
 
+        if(login != "" && email != ""){
+            for(int i = 0; i < lista_lenght; i++) {
+                if (login.equals(customersList.get(i).getName()) && email.equals(customersList.get(i).getEmail())==false ) {
+                   // System.out.println("Nazwa użytkownika zajęta");
+                    info = "Nazwa użytkownika zajęta";
+                    check = false;
+
+                } else if (login.equals(customersList.get(i).getName()) && email.equals(customersList.get(i).getEmail())) {
+                  //  System.out.println("Użytkownik istnieje.");
+                    info = "Użytkownik" + login + "istnieje. Zaloguj się";
+                    check = false;
+
+                }
+                else if(login.equals(customersList.get(i).getName()) == false && email.equals(customersList.get(i).getEmail())){
+                    info = "Użytkownik " + customersList.get(i).getName() + " użył podanego adresu e-mail. Zaloguj się";
+                    check = false;
+                }//else if(login != customersList.get(i).getName() && email != customersList.get(i).getEmail()) {
+                else{
+                 //   System.out.println("Rejestracja udana");
+                    info = "Rejestracja udana";
+                    check = true;
+
+                }
+            }
+        }
+        else{
+            info = "Podaj login i hasło";
+        }
+
+
+        return check;
+    }
+
+   private void addAndUpdate(String name, String email){
+
+       int lista_lenght = customersList.size();
+       int id;
+
+           if(customersList.isEmpty() == true){
+               id = 0;
+           }
+           else{
+               id = lista_lenght+1;
+           }
+           Customer newCustomer = new Customer(id,name,email);
+           customersList.add(newCustomer);
+           loginList.add(newCustomer.getName());
+
+           customersComboBox.setItems(loginList);
+
+
+
+   }
     private VerticalLayout addCustomers() {
         VerticalLayout customersLayout = new VerticalLayout();
         customersLayout.setWidth("80%");
-        customersComboBox = new ComboBox("Twój login");
 
-        Customer customer = new Customer(1,"a","b");
-                customersTab[0] = customer;
-        customersComboBox.setItems(customer.getName());
+        addAndUpdate("name","email");
 
         Button logIn = new Button("Zaloguj się");
         logIn.addStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -98,18 +155,25 @@ public class PlanUI extends UI {
         TextField login = new TextField();
         TextField email = new TextField();
         Button addUser = new Button("Zapisz się");
-       addUser.addStyleName(ValoTheme.BUTTON_PRIMARY);
+
+        addUser.addStyleName(ValoTheme.BUTTON_PRIMARY);
         addUser.setIcon(VaadinIcons.PLUS);
 
         login.setCaption("Podaj login");
         email.setCaption("Podaj email");
 
-        userLayout.addComponent(login);
-        userLayout.addComponent(email);
-        userLayout.addComponent(addUser);
+        userLayout.addComponents(login,email,addUser);
+
+        Label infoLabel = new Label();
 
         addUser.addClickListener(clickEvent -> {
-          //  planLayout.addUser(new Plan(login.getValue()));
+
+           if(check(login.getValue(), email.getValue())==true){
+               addAndUpdate(login.getValue(),email.getValue());
+           }
+
+            infoLabel.setCaption(info);
+            userLayout.addComponent(infoLabel);
             login.clear();
             login.focus();
             email.clear();
@@ -118,9 +182,9 @@ public class PlanUI extends UI {
 
         login.focus();
         addUser.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-       // root.addComponent(userLayout);
         return userLayout;
     }
+
 
     private void addGrid() {
         Grid<Lecture>grid = new Grid();
@@ -132,34 +196,7 @@ public class PlanUI extends UI {
         root.addComponent(grid);
     }
 
-    private void addDeleteButton() {
-        root.addComponent(new Button("Delete completed", clickEvent ->  {
-            planLayout.deleteCompleted();
-        }));
-    }
 
-    private void addForm() {
-       HorizontalLayout formLayout =  new HorizontalLayout();
-       formLayout.setWidth("80%");
-
-       TextField task = new TextField();
-       Button add = new Button("Add");
-       add.addStyleName(ValoTheme.BUTTON_PRIMARY);
-       add.setIcon(VaadinIcons.PLUS);
-
-       formLayout.addComponent(task);
-      formLayout.addComponent(add);
-
-       add.addClickListener(clickEvent -> {
-           planLayout.add(new Plan(task.getValue()));
-           task.clear();
-           task.focus();
-       });
-
-       task.focus();
-       add.setClickShortcut(ShortcutAction.KeyCode.ENTER);
-       root.addComponent(formLayout);
-    }
 
     private void addHeader() {
         Label header = new Label("Konferencja IT");
@@ -176,5 +213,34 @@ public class PlanUI extends UI {
     private void addTodoList() {
         planLayout.setWidth("80%");
         root.addComponent(planLayout);
+    }
+
+    private void addDeleteButton() {
+        root.addComponent(new Button("Delete completed", clickEvent ->  {
+            planLayout.deleteCompleted();
+        }));
+    }
+
+    private void addForm() {
+        HorizontalLayout formLayout =  new HorizontalLayout();
+        formLayout.setWidth("80%");
+
+        TextField task = new TextField();
+        Button add = new Button("Add");
+        add.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        add.setIcon(VaadinIcons.PLUS);
+
+        formLayout.addComponent(task);
+        formLayout.addComponent(add);
+
+        add.addClickListener(clickEvent -> {
+            planLayout.add(new Plan(task.getValue()));
+            task.clear();
+            task.focus();
+        });
+
+        task.focus();
+        add.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        root.addComponent(formLayout);
     }
 }
