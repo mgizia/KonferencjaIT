@@ -5,8 +5,14 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
+import com.vaadin.ui.components.grid.ItemClickListener;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.*;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
@@ -25,6 +31,8 @@ public class PlanUI extends UI {
     private ComboBox customersComboBox = new ComboBox("Twój login");
     private Label logInfo = new Label(infoText);
     private boolean logIn;
+    private String chosen;
+    Label reservInfo = new Label();
 
 
 
@@ -43,14 +51,17 @@ public class PlanUI extends UI {
         setupLayout();
         addHeader();
         addGrid();
-
+        addReservationLayout();
       //  addForm();
-       // addTodoList();
-       // addDeleteButton();
+        addTodoList();
+        addDeleteButton();
         infoText=("Zarejestruj się, jeśli zapisujesz się pierwszy raz lub wybierz swoją nazwę użytkownika z listy");
         addLogInfo(infoText);
         addLogLayout();
 
+    }
+
+    private void addReservationLayout() {
     }
 
     private void addLogLayout() {
@@ -62,6 +73,7 @@ public class PlanUI extends UI {
 
             root.addComponent(logLayout);
     }
+
     private boolean check(String login, String email){
         int lista_lenght = customersList.size();
         boolean check = false;
@@ -86,6 +98,7 @@ public class PlanUI extends UI {
                 else{
                  //   System.out.println("Rejestracja udana");
                     info = "Rejestracja udana";
+                    sendMessage(info);
                     check = true;
 
                 }
@@ -99,7 +112,9 @@ public class PlanUI extends UI {
         return check;
     }
 
-   private void addAndUpdate(String name, String email){
+
+
+    private void addAndUpdate(String name, String email){
 
        int lista_lenght = customersList.size();
        int id;
@@ -156,9 +171,6 @@ public class PlanUI extends UI {
            String emailLog = customersList.get(i).getEmail();
            customerLogged = new Customer(idLog, nameLog, emailLog);
         }
-
-
-
        }
 
     }
@@ -216,15 +228,121 @@ public class PlanUI extends UI {
         grid.addColumn(Lecture::getPath2).setCaption("Ścieżka tematyczna nr 2");
         grid.addColumn(Lecture::getPath3).setCaption("Ścieżka tematyczna nr 3");
         grid.setSizeFull();
+
+    /*   final TextField selectedPath2 = new TextField();
+        grid.addItemClickListener(new ItemClickListener<Lecture>() {
+            @Override
+            public void itemClick(Grid.ItemClick<Lecture> itemClick) {
+                if(itemClick.getColumn().toString().equals("Ścieżka tematyczna nr 1")){
+                    if(itemClick.getMouseEventDetails().isDoubleClick()){
+                        // Notification.show("Value" ;
+                        selectedPath2.setCaption("Wybrano termin:  " + itemClick.getItem().getPath1() + ". Podaj nr ścieżki tematycznej (1, 2 lub 3)");
+                    }
+
+                }
+                else if (itemClick.getColumn().toString().equals("Ścieżka tematyczna nr 2")){
+                    if(itemClick.getMouseEventDetails().isDoubleClick()){
+                        // Notification.show("Value" ;
+                        selectedPath2.setCaption("Wybrano termin:  " + itemClick.getItem().getPath2() + ". Podaj nr ścieżki tematycznej (1, 2 lub 3)");
+                    }
+                }
+                else if(itemClick.getColumn().toString().equals("Ścieżka tematyczna nr 3")){
+                    if(itemClick.getMouseEventDetails().isDoubleClick()){
+                        // Notification.show("Value" ;
+                        selectedPath2.setCaption("Wybrano termin:  " + itemClick.getItem().getPath3() + ". Podaj nr ścieżki tematycznej (1, 2 lub 3)");
+                    }
+
+                }
+            }
+        });
+
+     */
+
+        final TextField selectedPath = new TextField();
+        Button add = new Button("Rezerwuj");
+        add.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        add.setIcon(VaadinIcons.PLUS);
+        add.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+
+        grid.addItemClickListener(new ItemClickListener<Lecture>() {
+            @Override
+            public void  itemClick(Grid.ItemClick<Lecture> event){
+                if(event.getMouseEventDetails().isDoubleClick()){
+                    chosen = event.getItem().getPath1();
+                    selectedPath.setCaption("Wybrano termin:  " + event.getItem().getPath1() + ". Podaj nr ścieżki tematycznej (1, 2 lub 3)");
+                }
+            }
+        });
+
+        add.addClickListener(clickEvent -> {
+           reservationId(Integer.parseInt(selectedPath.getValue()));
+
+           // planLayout.add(new Plan(reservation.getValue()));
+           // reservation.clear();
+           // reservation.focus();
+        });
+
         root.addComponent(grid);
+        root.addComponents(selectedPath,add,reservInfo);
     }
 
+    private void reservationId(int selPath) {
+
+        Lecture lect = new Lecture();
+        int lecture;
+        String mess;
+       int a = lect.getId(chosen);
+       if (selPath == 1 || selPath == 2 || selPath ==3){
+           lecture = selPath*100 + a;
+           mess="Wybrano sciezke nr " + selPath + " w terminie: " + chosen;
+           reservInfo.setCaption(mess);
+
+       }
+       else{
+           mess="Nie ma takiej sciezki. Rezerwacja nieudana. Spróbuj ponownie. ";
+           reservInfo.setCaption(mess);
+         //  sendMessage(mess);
+       }
+
+        sendMessage(mess);
+    }
+
+    File plik = new File("powiadomienia.txt");
+
+    private void sendMessage(String mess) {
+
+        if(logIn == true){
+            try{
+            Writer output = new BufferedWriter(new FileWriter("powiadomienia.txt", true));
+            output.append( customerLogged.getName() + "," + customerLogged.getEmail() + "," + mess +";\r\n" );
+            output.close();
+             } catch (Exception e){
+            System.out.println("Błąd wejscia - wyjscia");
+            }
+        }
+    }
 
 
     private void addHeader() {
         Label header = new Label("Konferencja IT");
         header.addStyleName(ValoTheme.LABEL_H1);
-        root.addComponent(header);
+
+        String info1 = "Poniżej przedstawiony jest kalendarz konferencji IT. Zaloguj się, aby móc dokonać rejestracji";
+        String info2 = "Możesz dokonać wielu rezerwacji, jednak pamiętaj, aby wybrane prelekcje nie odbywały się w tym samym teminie";
+        String info3 = "Po dokonaniu rezerwacji na podany adres e-mail zostanie wysłane potwierdzenia";
+        String info4 = "Będąc zalogowanym możesz zrezygnować ze swoich rezerwacji";
+
+        Label header2 = new Label(info1);
+        Label header2a = new Label(info2);
+        Label header2b = new Label(info3);
+        Label header2c = new Label(info4);
+
+        header2.addStyleName(ValoTheme.LABEL_SMALL);
+        header2a.addStyleName(ValoTheme.LABEL_SMALL);
+        header2b.addStyleName(ValoTheme.LABEL_SMALL);
+        header2c.addStyleName(ValoTheme.LABEL_SMALL);
+
+        root.addComponents(header, header2, header2a, header2b, header2c);
     }
 
     private void setupLayout() {
@@ -248,21 +366,21 @@ public class PlanUI extends UI {
         HorizontalLayout formLayout =  new HorizontalLayout();
         formLayout.setWidth("80%");
 
-        TextField task = new TextField();
+        TextField reservation = new TextField();
         Button add = new Button("Add");
         add.addStyleName(ValoTheme.BUTTON_PRIMARY);
         add.setIcon(VaadinIcons.PLUS);
 
-        formLayout.addComponent(task);
+        formLayout.addComponent(reservation);
         formLayout.addComponent(add);
 
         add.addClickListener(clickEvent -> {
-            planLayout.add(new Plan(task.getValue()));
-            task.clear();
-            task.focus();
+            planLayout.add(new Plan(reservation.getValue()));
+            reservation.clear();
+            reservation.focus();
         });
 
-        task.focus();
+        reservation.focus();
         add.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         root.addComponent(formLayout);
     }

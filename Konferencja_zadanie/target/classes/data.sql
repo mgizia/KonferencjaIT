@@ -1,5 +1,5 @@
-CREATE TABLE IF NOT EXISTS Plan(id IDENTITY PRIMARY KEY, lecture VARCHAR(45), user VARCHAR(45));
+CREATE TABLE IF NOT EXISTS Plan(id IDENTITY PRIMARY KEY, user VARCHAR(45), lecture VARCHAR(45), deleted BOOLEAN);
 DELETE FROM Plan;
-INSERT INTO Plan(id,lecture, user) VALUES (1, '121', 'login1');
-INSERT INTO Plan(id,lecture, user) VALUES (2, '221', 'login2');
-INSERT INTO Plan(id,lecture, user) VALUES (3, '122', 'login3');
+INSERT INTO Plan(id, user, lecture,deleted) VALUES (1,  'login1','121', false );
+INSERT INTO Plan(id, user,lecture,deleted) VALUES (2,  'login2','221', false );
+INSERT INTO Plan(id, user,lecture,deleted) VALUES (3, 'login3','122',  false );

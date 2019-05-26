@@ -34,7 +34,7 @@ public class PlanLayout extends VerticalLayout {
     }
 
     public void deleteCompleted() {
-      //  repo.deleteByDone(true);
+      repo.deleteByDeleted(true);
         update();
     }
 }

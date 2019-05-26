@@ -7,6 +7,7 @@ public class Lecture{
     private int path2;
     private int path3;
 
+    public Lecture(){}
     public Lecture(int id, int path1, int path2, int path3){
 
         this.id = id;
@@ -15,6 +16,21 @@ public class Lecture{
         this.path3 = path3;
     }
 
+    public int getId(String path){
+        int id_pom;
+        if(path.equals("1.06.2019r., 10:00-11:45"))
+            id_pom=11;
+        else if(path.equals("1.06.2019r., 12:00-13:45"))
+            id_pom=12;
+        else if(path.equals("2.06.2019r., 10:00-11:45"))
+            id_pom=21;
+        else if(path.equals("2.06.2019r., 12:00-13:45"))
+            id_pom=22;
+        else
+            id_pom=0;
+
+        return id_pom;
+    }
     public String getPath1(){
         if(path1 == 111)
             return "1.06.2019r., 10:00-11:45";

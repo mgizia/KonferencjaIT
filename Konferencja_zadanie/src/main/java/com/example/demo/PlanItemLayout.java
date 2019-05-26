@@ -10,17 +10,19 @@ import com.vaadin.ui.themes.ValoTheme;
 
 
 public class PlanItemLayout extends HorizontalLayout {
-   // private final CheckBox done;
+    private final CheckBox deleted;
     private final TextField user;
     private final TextField lecture;
 
+
     public PlanItemLayout(Plan plan) {
-       // done = new CheckBox();
+        deleted = new CheckBox();
         user = new TextField();
         lecture = new TextField();
+
         user.addStyleName(ValoTheme.TEXTFIELD_BORDERLESS);
         lecture.addStyleName(ValoTheme.TEXTFIELD_BORDERLESS);
-      //  addComponent(done);
+        addComponent(deleted);
         addComponentsAndExpand(user);
         addComponentsAndExpand(user);
         setDefaultComponentAlignment(Alignment.MIDDLE_LEFT);

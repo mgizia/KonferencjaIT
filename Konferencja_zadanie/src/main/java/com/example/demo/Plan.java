@@ -18,6 +18,8 @@ public class Plan {
 
     private String lecture;
 
+    private boolean deleted;
+
     public Plan(){
     }
 
@@ -30,6 +32,12 @@ public class Plan {
         this.user = user;
     }
 
+    public Plan(String user, String lecture, boolean deleted){
+        this.user = user;
+        this.lecture=lecture;
+        this.deleted = deleted;
+    }
+
     public String getUser(){
         return  user;
     }
@@ -38,16 +46,16 @@ public class Plan {
         this.user = user;
     }
 
-    public String getLecture(){return user;}
+    public String getLecture(){return lecture;}
 
     public void setLecture(String lecture){
         this.lecture = lecture;
     }
-   // public boolean isDone(){
-     //   return done;
-    //}
+    public boolean isDeleted(){
+      return deleted;
+    }
 
-  /*  public void setDone(boolean done){
-        this.done = done;
-    }*/
+   public void setDeleted(boolean done){
+      this.deleted = deleted;
+    }
 }
