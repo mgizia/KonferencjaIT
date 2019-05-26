@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 @SpringUI
@@ -146,11 +147,10 @@ public class PlanUI extends UI {
                 logLayout.setVisible(false);
                 selectedPath.setVisible(true);
                 add.setVisible(true);
-
                 whoIsLoggedIn(logName);
                 infoText="Jestes zalogowany jako: " + customerLogged.getName() ;
                 addLogInfo(infoText);
-                addTodoList();
+                addReservationsList();
                 addDeleteButton();
             }
 
@@ -276,12 +276,15 @@ public class PlanUI extends UI {
             }
         });
 
-        add.addClickListener(clickEvent -> {
-           reservationId(Integer.parseInt(selectedPath.getValue()));
 
-           planLayout.add(new Plan(customerLogged.getName(),lectureString));
-            selectedPath.clear();
-            selectedPath.focus();
+         add.addClickListener(clickEvent -> {
+            int sel=Integer.parseInt(selectedPath.getValue());
+            reservationId(sel);
+            if(sel == 1 || sel == 2 || sel ==3 ){
+                planLayout.add(new Plan(customerLogged.getName(),lectureString));
+                selectedPath.clear();
+                selectedPath.focus();
+            }
         });
 
         selectedPath.focus();
@@ -302,7 +305,7 @@ public class PlanUI extends UI {
 
        }
        else{
-           mess="Nie ma takiej sciezki. Rezerwacja nieudana. Spróbuj ponownie. ";
+           mess="Nie ma takiej sciezki tematycznej. Rezerwacja nieudana. Spróbuj ponownie. ";
            reservInfo.setCaption(mess);
          //  sendMessage(mess);
        }
@@ -354,7 +357,7 @@ public class PlanUI extends UI {
        setContent(root);
     }
 
-    private void addTodoList() {
+    private void addReservationsList() {
         planLayout.setWidth("80%");
         Label userRes = new Label("Moje rezerwacje: ");
         userRes.addStyleName(ValoTheme.LABEL_H4);

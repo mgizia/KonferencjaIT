@@ -2,10 +2,7 @@ package com.example.demo;
 
 
 import com.vaadin.data.Binder;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 
 
@@ -31,6 +28,20 @@ public class PlanItemLayout extends HorizontalLayout {
         Binder<Plan> binder = new Binder<>(Plan.class);
         binder.bindInstanceFields(this);
         binder.setBean(plan);
+
+       // binder.addValueChangeListener(event -> changeListener.todoChange(plan));
+
+       /* deleted.addValueChangeListener(valueChangeEvent -> {
+            if(deleted.getValue() == false){
+            deleted.setValue(true) ; }
+        else if(deleted.getValue() == true){
+            deleted.setValue(false);
+        }}
+        );
+*/
+
+
+
 
     }
 

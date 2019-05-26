@@ -1,15 +1,9 @@
+﻿
+name,email,Nie ma takiej sciezki tematycznej. Rezerwacja nieudana. Spróbuj ponownie. ;
+name,email,Nie ma takiej sciezki tematycznej. Rezerwacja nieudana. Spróbuj ponownie. ;
+name,email,Nie ma takiej sciezki tematycznej. Rezerwacja nieudana. Spróbuj ponownie. ;
 name,email,Wybrano sciezke nr 2 w terminie: 1.06.2019r., 12:00-13:45;
-name,email,Wybrano sciezke nr 2 w terminie: 1.06.2019r., 10:00-11:45;
-nowy,login,Wybrano sciezke nr 2 w terminie: 1.06.2019r., 12:00-13:45;
-name,email,Nie ma takiej sciezki. Rezerwacja nieudana. Spróbuj ponownie. ;
-name,email,Wybrano sciezke nr 3 w terminie: 1.06.2019r., 10:00-11:45;
-name,email,Wybrano sciezke nr 1 w terminie: 1.06.2019r., 12:00-13:45;
-name,email,Wybrano sciezke nr 1 w terminie: 2.06.2019r., 10:00-11:45;
-name,email,Wybrano sciezke nr 1 w terminie: 2.06.2019r., 10:00-11:45;
-name,email,Wybrano sciezke nr 1 w terminie: 2.06.2019r., 12:00-13:45;
-name,email,Wybrano sciezke nr 2 w terminie: 2.06.2019r., 12:00-13:45;
-name,email,Wybrano sciezke nr 1 w terminie: 1.06.2019r., 10:00-11:45;
-name,email,Wybrano sciezke nr 2 w terminie: 1.06.2019r., 12:00-13:45;
-ja,ten,Wybrano sciezke nr 2 w terminie: 1.06.2019r., 10:00-11:45;
-name,email,Wybrano sciezke nr 1 w terminie: 1.06.2019r., 12:00-13:45;
-name,email,Wybrano sciezke nr 3 w terminie: 1.06.2019r., 12:00-13:45;
+name,email,Nie ma takiej sciezki tematycznej. Rezerwacja nieudana. Spróbuj ponownie. ;
+name,email,Wybrano sciezke nr 2 w terminie: 2.06.2019r., 10:00-11:45;
+name,email,Nie ma takiej sciezki tematycznej. Rezerwacja nieudana. Spróbuj ponownie. ;
+name,email,Wybrano sciezke nr 2 w terminie: 2.06.2019r., 10:00-11:45;

@@ -14,14 +14,14 @@ public class CustomerService {
 
  /*   public List<Customer> findAll() {
         return jdbcTemplate.query(
-               // "SELECT id, first_name, last_name FROM customers",
+               // "SELECT id, user, lecture, deleted FROM plan",
              //   (rs, rowNum) -> new Customer(rs.getLong("id"),
-                 //       rs.getString("first_name"), rs.getString("last_name")));
+                 //       rs.getString("user"), rs.getString("lecture")));
     }
 
     public void update(Customer customer) {
         jdbcTemplate.update(
-                "UPDATE customers SET first_name=?, last_name=? WHERE id=?",
+                "UPDATE plan SET user=?, lecture=? deleted=? WHERE id=?",
                 customer.getName(), customer.getEmail(), customer.getId()
                 );
     }*/
