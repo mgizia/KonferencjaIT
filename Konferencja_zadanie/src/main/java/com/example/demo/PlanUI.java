@@ -1,7 +1,5 @@
 package com.example.demo;
 
-
-import ch.qos.logback.core.joran.spi.ConsoleTarget;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
@@ -9,8 +7,6 @@ import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
@@ -22,10 +18,13 @@ public class PlanUI extends UI {
     private VerticalLayout root;
     List<Customer> customersList = new ArrayList<Customer>();
     List<String> loginList = new ArrayList<String>();
-
+    HorizontalLayout logLayout = new HorizontalLayout();
     private String info;
-    private Customer customer;
-    private static ComboBox customersComboBox = new ComboBox("Twój login");;
+    private String infoText;
+    private Customer customerLogged;
+    private ComboBox customersComboBox = new ComboBox("Twój login");
+    private Label logInfo = new Label(infoText);
+    private boolean logIn;
 
 
 
@@ -48,20 +47,20 @@ public class PlanUI extends UI {
       //  addForm();
        // addTodoList();
        // addDeleteButton();
-        addLogInfo();
+        infoText=("Zarejestruj się, jeśli zapisujesz się pierwszy raz lub wybierz swoją nazwę użytkownika z listy");
+        addLogInfo(infoText);
         addLogLayout();
+
     }
 
     private void addLogLayout() {
-        HorizontalLayout logLayout = new HorizontalLayout();
-        VerticalLayout custLay = addCustomers();
-        VerticalLayout userLay = addUserForm();
+            VerticalLayout custLay = addCustomers();
+            VerticalLayout userLay = addUserForm();
 
-        logLayout.addComponent(userLay);
-        logLayout.addComponent(custLay);
+            logLayout.addComponent(userLay);
+            logLayout.addComponent(custLay);
 
-        root.addComponent(logLayout);
-
+            root.addComponent(logLayout);
     }
     private boolean check(String login, String email){
         int lista_lenght = customersList.size();
@@ -124,26 +123,49 @@ public class PlanUI extends UI {
         VerticalLayout customersLayout = new VerticalLayout();
         customersLayout.setWidth("80%");
 
-        addAndUpdate("name","email");
+        //pierwszy użytkownik
+       addAndUpdate("name","email");
 
-        Button logIn = new Button("Zaloguj się");
-        logIn.addStyleName(ValoTheme.BUTTON_PRIMARY);
-        logIn.setIcon(VaadinIcons.PLUS);
-        logIn.addClickListener(clickEvent -> {
+        Button logInButton = new Button("Zaloguj się");
+        logInButton.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        logInButton.setIcon(VaadinIcons.PLUS);
 
-           //zmieni sie wyglad
+
+        logInButton.addClickListener(clickEvent -> {
+           logIn = true;
+           logLayout.setVisible(false);
+           String logName = (String) customersComboBox.getValue() ;
+           whoIsLoggedIn(logName);
+           infoText="Jestes zalogowany jako: " + customerLogged.getName() ;
+           addLogInfo(infoText);
 
         });
 
         customersLayout.addComponent(customersComboBox);
-        customersLayout.addComponent(logIn);
+        customersLayout.addComponent(logInButton);
 
         return customersLayout;
 
     }
 
-    private void addLogInfo() {
-        Label logInfo = new Label("Zarejestruj się, jeśli zapisujesz się pierwszy raz lub wybierz swoją nazwę użytkownika z listy");
+    private void whoIsLoggedIn(String login) {
+       for(int i = 0 ; i < customersList.size() ; i++){
+        if(login.equals(customersList.get(i).getName())){
+           int idLog = customersList.get(i).getId();
+           String nameLog = customersList.get(i).getName();
+           String emailLog = customersList.get(i).getEmail();
+           customerLogged = new Customer(idLog, nameLog, emailLog);
+        }
+
+
+
+       }
+
+    }
+
+    private void addLogInfo(String infoText) {
+
+        logInfo.setCaption(infoText);
         logInfo.addStyleName(ValoTheme.LABEL_H2);
         root.addComponent(logInfo);
     }
@@ -178,6 +200,7 @@ public class PlanUI extends UI {
             login.focus();
             email.clear();
             email.focus();
+
         });
 
         login.focus();
