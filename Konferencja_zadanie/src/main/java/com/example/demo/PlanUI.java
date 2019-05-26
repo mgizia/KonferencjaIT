@@ -9,6 +9,8 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.lang.model.type.ArrayType;
+import javax.swing.*;
 import java.util.List;
 import java.util.Arrays;
 
@@ -17,6 +19,11 @@ import java.util.Arrays;
 public class PlanUI extends UI {
 
     private VerticalLayout root;
+    private Customer[]  customersTab = new Customer[60];
+    Customer customer;
+    private static ComboBox customersComboBox;
+
+
 
     List<Lecture>plan = Arrays.asList(
             new Lecture(1,111,211,311),
@@ -33,10 +40,86 @@ public class PlanUI extends UI {
         setupLayout();
         addHeader();
         addGrid();
-        addForm();
-        addTodoList();
-        addDeleteButton();
 
+      //  addForm();
+       // addTodoList();
+       // addDeleteButton();
+        addLogInfo();
+        addLogLayout();
+    }
+
+    private void addLogLayout() {
+        HorizontalLayout logLayout = new HorizontalLayout();
+        VerticalLayout custLay = addCustomers();
+        VerticalLayout userLay = addUserForm();
+
+        logLayout.addComponent(userLay);
+        logLayout.addComponent(custLay);
+
+        root.addComponent(logLayout);
+
+    }
+
+    private VerticalLayout addCustomers() {
+        VerticalLayout customersLayout = new VerticalLayout();
+        customersLayout.setWidth("80%");
+        customersComboBox = new ComboBox("Twój login");
+
+        Customer customer = new Customer(1,"a","b");
+                customersTab[0] = customer;
+        customersComboBox.setItems(customer.getName());
+
+        Button logIn = new Button("Zaloguj się");
+        logIn.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        logIn.setIcon(VaadinIcons.PLUS);
+        logIn.addClickListener(clickEvent -> {
+
+           //zmieni sie wyglad
+
+        });
+
+        customersLayout.addComponent(customersComboBox);
+        customersLayout.addComponent(logIn);
+
+        return customersLayout;
+
+    }
+
+    private void addLogInfo() {
+        Label logInfo = new Label("Zarejestruj się, jeśli zapisujesz się pierwszy raz lub wybierz swoją nazwę użytkownika z listy");
+        logInfo.addStyleName(ValoTheme.LABEL_H2);
+        root.addComponent(logInfo);
+    }
+
+    private VerticalLayout addUserForm() {
+        VerticalLayout userLayout =  new VerticalLayout();
+        userLayout.setWidth("80%");
+
+        TextField login = new TextField();
+        TextField email = new TextField();
+        Button addUser = new Button("Zapisz się");
+       addUser.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        addUser.setIcon(VaadinIcons.PLUS);
+
+        login.setCaption("Podaj login");
+        email.setCaption("Podaj email");
+
+        userLayout.addComponent(login);
+        userLayout.addComponent(email);
+        userLayout.addComponent(addUser);
+
+        addUser.addClickListener(clickEvent -> {
+          //  planLayout.addUser(new Plan(login.getValue()));
+            login.clear();
+            login.focus();
+            email.clear();
+            email.focus();
+        });
+
+        login.focus();
+        addUser.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+       // root.addComponent(userLayout);
+        return userLayout;
     }
 
     private void addGrid() {
@@ -65,7 +148,7 @@ public class PlanUI extends UI {
        add.setIcon(VaadinIcons.PLUS);
 
        formLayout.addComponent(task);
-       formLayout.addComponent(add);
+      formLayout.addComponent(add);
 
        add.addClickListener(clickEvent -> {
            planLayout.add(new Plan(task.getValue()));

@@ -12,16 +12,17 @@ public class CustomerService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<Customer> findAll() {
+ /*   public List<Customer> findAll() {
         return jdbcTemplate.query(
-                "SELECT id, first_name, last_name FROM customers",
-                (rs, rowNum) -> new Customer(rs.getLong("id"),
-                        rs.getString("first_name"), rs.getString("last_name")));
+               // "SELECT id, first_name, last_name FROM customers",
+             //   (rs, rowNum) -> new Customer(rs.getLong("id"),
+                 //       rs.getString("first_name"), rs.getString("last_name")));
     }
 
     public void update(Customer customer) {
         jdbcTemplate.update(
                 "UPDATE customers SET first_name=?, last_name=? WHERE id=?",
-                customer.getName(), customer.getEmail(), customer.getId());
-    }
+                customer.getName(), customer.getEmail(), customer.getId()
+                );
+    }*/
 }

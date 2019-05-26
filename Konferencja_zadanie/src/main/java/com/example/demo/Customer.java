@@ -4,16 +4,16 @@ import java.io.*;
 
 
 public class Customer {
-    private Long id;
+    private int id;
     private String name, email;
 
-    public Customer(Long id, String name, String email) {
+    public Customer(int id, String name, String email) {
         this.id = id;
         this.name = name;
         this.email = email;
     }
 
-    public Long getId(){
+    public int getId(){
         return this.id;
     }
 
